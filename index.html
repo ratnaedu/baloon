@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#68c9ff">
+<title>BALLOON POP – PECAHKAN BALON PINTAR</title>
+<style>
+:root{--ink:#17345c;--blue:#45b9f5;--pink:#ff6ca8;--yellow:#ffd34e;--green:#45d6a1;--purple:#9b83ff}
+*{box-sizing:border-box}
+body{margin:0;font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif;color:var(--ink);background:linear-gradient(180deg,#75d5ff 0%,#c5efff 56%,#eafaff 100%);min-height:100vh;overflow-x:hidden}
+button,input{font:inherit}
+button{border:0;border-radius:14px;padding:11px 17px;font-weight:800;cursor:pointer;color:#17345c;background:#fff;box-shadow:0 4px 0 #b8d7e8;transition:transform .12s,filter .12s}
+button:hover{filter:brightness(1.04);transform:translateY(-1px)}
+button:active{transform:translateY(2px);box-shadow:0 2px 0 #b8d7e8}
+button.primary{background:linear-gradient(135deg,#ffcf4a,#ffad4b);box-shadow:0 5px 0 #d98b35}
+button.blue{background:#4cbcf4;color:#fff;box-shadow:0 5px 0 #258ac0}
+button.pink{background:#ff76ac;color:#fff;box-shadow:0 5px 0 #d94e86}
+button:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px clamp(12px,3vw,30px);background:#ffffffd9;backdrop-filter:blur(10px);box-shadow:0 3px 14px #397ca522}
+.brand{font-weight:1000;letter-spacing:.4px;font-size:clamp(14px,2vw,20px)}
+.brand span{color:#ef5b9c}
+.stats{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.pill{background:#edf8ff;border:1px solid #cceaff;border-radius:999px;padding:7px 12px;font-weight:800;font-size:13px}
+main{width:min(1100px,94vw);margin:18px auto 40px;position:relative}
+.cloud{position:fixed;z-index:-1;width:150px;height:48px;background:#ffffff9c;border-radius:60px;filter:blur(.2px);animation:cloudmove 34s linear infinite}
+.cloud:before,.cloud:after{content:"";position:absolute;background:inherit;border-radius:50%}
+.cloud:before{width:65px;height:65px;left:22px;top:-28px}.cloud:after{width:82px;height:82px;right:18px;top:-38px}
+.c1{top:17%;left:-170px}.c2{top:54%;left:-190px;animation-delay:-17s;transform:scale(.7)}
+@keyframes cloudmove{to{left:110vw}}
+.panel{background:#ffffffed;border:3px solid #fff;border-radius:25px;padding:clamp(17px,3vw,30px);box-shadow:0 12px 30px #277aa522}
+.hero{text-align:center;max-width:760px;margin:30px auto}
+.logo-balloon{font-size:clamp(55px,10vw,90px);filter:drop-shadow(0 8px 4px #3983aa44);animation:bob 2.4s ease-in-out infinite}
+h1{font-size:clamp(27px,5vw,48px);line-height:1.05;margin:8px 0;color:#16416e;text-shadow:2px 3px 0 #fff}
+h1 em{font-style:normal;color:#f45f9b}
+.subtitle{font-weight:700;color:#47708f}
+.formrow{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin:20px auto 10px}
+input{border:2px solid #c8e7f8;border-radius:14px;padding:12px 15px;min-width:min(260px,80vw);outline:none}
+input:focus{border-color:#43b9f4;box-shadow:0 0 0 3px #43b9f433}
+.instructions{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;text-align:left;margin:22px 0}
+.tip{background:#f1faff;border-radius:16px;padding:13px;font-size:14px;font-weight:650}
+.tip b{display:block;font-size:16px;margin-bottom:4px}
+.hidden{display:none!important}
+.gamehead{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.levelname{font-weight:1000;font-size:19px}
+.progresswrap{height:13px;background:#dceefa;border-radius:99px;overflow:hidden;flex:1;min-width:120px}
+.progress{height:100%;width:0;background:linear-gradient(90deg,#45d6a1,#ffd34e);border-radius:99px;transition:width .35s}
+.questionbox{text-align:center;padding:15px 10px 8px}
+.tag{display:inline-block;border-radius:999px;padding:5px 12px;background:#fff0c4;color:#8a5a00;font-size:12px;font-weight:1000;letter-spacing:.6px}
+.question{font-size:clamp(20px,3.2vw,30px);font-weight:950;margin:10px auto 4px;max-width:850px}
+.hint{font-size:13px;color:#64829a;font-weight:650}
+.playfield{position:relative;min-height:350px;height:min(53vh,470px);margin-top:10px;border-radius:22px;overflow:hidden;background:linear-gradient(180deg,#a7e6ff66,#e4f9ff99);border:2px dashed #9bd9f5}
+.playfield:after{content:"";position:absolute;bottom:-40px;left:-5%;width:110%;height:75px;background:#8ee3b4;border-radius:50% 50% 0 0;z-index:0}
+.balloon{--balloon:#ff6ca8;position:absolute;z-index:2;width:clamp(100px,17vw,145px);height:clamp(125px,21vw,175px);border-radius:52% 48% 48% 48%;background:radial-gradient(circle at 28% 23%,#ffffffd9 0 5%,#ffffff55 6% 13%,transparent 14%),linear-gradient(135deg,#ffffff55,transparent 40%),var(--balloon);box-shadow:inset -10px -12px 18px #00000020,inset 7px 7px 15px #ffffff50,0 12px 15px #47799a30;display:flex;align-items:center;justify-content:center;text-align:center;padding:15px 10px;color:#fff;font-size:clamp(17px,2.6vw,23px);font-weight:1000;text-shadow:0 2px 3px #0003;cursor:pointer;user-select:none;animation:float 3s ease-in-out infinite;transition:opacity .15s,transform .15s}
+.balloon:before{content:"";position:absolute;bottom:-10px;left:calc(50% - 8px);border-left:8px solid transparent;border-right:8px solid transparent;border-top:13px solid var(--balloon)}
+.balloon:after{content:"";position:absolute;bottom:-54px;left:50%;height:45px;border-left:1.5px solid #6c9db2;transform:rotate(2deg)}
+.balloon:hover{filter:brightness(1.08)}
+.balloon.popped{animation:pop .28s ease-out forwards;pointer-events:none}
+.balloon.wrong{animation:shake .35s ease-in-out}
+@keyframes float{0%,100%{transform:translateY(9px) rotate(-2deg)}50%{transform:translateY(-13px) rotate(2deg)}}
+@keyframes pop{to{transform:scale(1.8);opacity:0}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-9px)}75%{transform:translateX(9px)}}
+@keyframes bob{50%{transform:translateY(-12px) rotate(4deg)}}
+.feedback{position:absolute;z-index:8;left:50%;top:48%;transform:translate(-50%,-50%);font-size:clamp(20px,4vw,34px);font-weight:1000;text-align:center;text-shadow:0 2px #fff;pointer-events:none}
+.pointer{position:absolute;z-index:10;width:24px;height:24px;border:3px solid #fff;border-radius:50%;background:#ff4e8b;box-shadow:0 0 0 3px #ff4e8b88,0 3px 8px #17345c66;pointer-events:none;transform:translate(-50%,-50%);display:none}
+.pointer.pinching{background:#ffd34e;transform:translate(-50%,-50%) scale(.75)}
+.bottomrow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+.controlhint{font-size:12px;color:#587b95;font-weight:700}
+.camera-panel{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#video{width:120px;height:90px;object-fit:cover;transform:scaleX(-1);border-radius:12px;background:#d9eff9;border:2px solid #fff}
+#handCanvas{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.overlay{position:fixed;inset:0;background:#17345c66;display:grid;place-items:center;z-index:50;padding:18px}
+.modal{max-width:520px;width:100%;text-align:center}
+.modal h2{font-size:30px;margin:5px}
+.bigscore{font-size:46px;font-weight:1000;color:#f05c9a}
+.leveldots{display:flex;justify-content:center;gap:8px;margin:12px}
+.dot{width:14px;height:14px;border-radius:50%;background:#d5e8f4}.dot.done{background:#42d5a0}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:80;background:#17345c;color:#fff;padding:10px 15px;border-radius:12px;font-weight:700;font-size:13px;max-width:90vw;text-align:center;box-shadow:0 5px 20px #17345c44}
+.confetti{position:absolute;z-index:12;width:9px;height:13px;pointer-events:none;animation:confetti 850ms ease-out forwards}
+@keyframes confetti{to{transform:translate(var(--dx),var(--dy)) rotate(650deg);opacity:0}}
+footer{text-align:center;color:#5d829b;font-size:12px;margin:18px}
+@media(max-width:600px){.topbar{align-items:flex-start}.stats{gap:5px}.pill{font-size:11px;padding:6px 8px}.playfield{min-height:330px;height:48vh}.bottomrow{justify-content:center}.camera-panel{justify-content:center}}
+</style>
+</head>
+<body>
+<div class="cloud c1"></div><div class="cloud c2"></div>
+<header class="topbar">
+  <div class="brand">🎈 BALLOON <span>POP</span></div>
+  <div class="stats">
+    <div class="pill">👧 <span id="navName">Pemain</span></div>
+    <div class="pill">⭐ Skor: <span id="navScore">0</span></div>
+    <div class="pill">⏱️ <span id="navTimer">45</span>d</div>
+    <button id="soundBtn" aria-label="Nyalakan atau matikan suara">🔊 Suara</button>
+  </div>
+</header>
+<main>
+<section id="welcome" class="panel hero">
+  <div class="logo-balloon">🎈🎈🎈</div>
+  <h1>BALLOON POP<br><em>PECAHKAN BALON PINTAR!</em></h1>
+  <p class="subtitle">Petualangan Matematika Bilangan Cacah • Kelas 5 SD</p>
+  <p>Siap terbang bersama angka? Pecahkan balon yang berisi jawaban paling tepat!</p>
+  <div class="formrow">
+    <input id="studentName" maxlength="22" placeholder="Tulis nama kamu..." aria-label="Nama siswa">
+    <button class="primary" id="startBtn">🚀 Mulai Bermain</button>
+  </div>
+  <div class="instructions">
+    <div class="tip"><b>👆 Sentuh / Klik</b>Pilih balon dengan mouse atau layar sentuh.</div>
+    <div class="tip"><b>🤏 Gesture Pinch</b>Aktifkan kamera, arahkan telunjuk, lalu dekatkan ibu jari dan telunjuk untuk memecahkan balon.</div>
+    <div class="tip"><b>🧠 Tantangan</b>5 level × 3 soal: LOTS, MOTS, dan HOTS.</div>
+  </div>
+  <p class="hint">Kamera bersifat opsional. Kamera hanya aktif setelah kamu menekan tombol dan memberikan izin.</p>
+</section>
+
+<section id="game" class="panel hidden">
+  <div class="gamehead">
+    <div class="levelname" id="levelLabel">Level 1</div>
+    <div class="progresswrap"><div class="progress" id="progress"></div></div>
+    <div class="pill">Soal <span id="questionNo">1/15</span></div>
+  </div>
+  <div class="questionbox">
+    <span class="tag" id="difficulty">LOTS • MUDAH</span>
+    <div class="question" id="questionText">Pertanyaan muncul di sini</div>
+    <div class="hint" id="questionHint">Pilih satu balon jawaban yang benar.</div>
+  </div>
+  <div class="playfield" id="playfield" aria-label="Area permainan balon">
+    <div class="pointer" id="pointer"></div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+  <div class="bottomrow">
+    <div class="controlhint" id="controlStatus">🖱️ Klik/sentuh balon atau aktifkan kamera untuk gesture pinch.</div>
+    <div class="camera-panel">
+      <video id="video" playsinline muted class="hidden"></video>
+      <button class="blue" id="cameraBtn">📷 Aktifkan Kamera</button>
+      <button id="stopCameraBtn" class="hidden">Matikan Kamera</button>
+    </div>
+  </div>
+</section>
+<footer>Belajar bilangan cacah jadi lebih seru! 🌈</footer>
+</main>
+
+<div id="resultOverlay" class="overlay hidden">
+  <div class="panel modal">
+    <div style="font-size:58px" id="resultEmoji">🏆</div>
+    <h2 id="resultTitle">Hebat!</h2>
+    <p id="resultMessage">Kamu menyelesaikan permainan.</p>
+    <div class="bigscore"><span id="finalScore">0</span> ⭐</div>
+    <p id="finalDetail"></p>
+    <div class="leveldots" id="levelDots"></div>
+    <button class="primary" id="againBtn">🔁 Main Lagi</button>
+  </div>
+</div>
+<div id="toast" class="toast hidden" role="status"></div>
+<canvas id="handCanvas"></canvas>
+
+<script>
+(() => {
+"use strict";
+const $ = id => document.getElementById(id);
+const questions = [
+ {level:1,items:[
+  {type:"LOTS",q:"Angka 7 pada bilangan 47.325 menempati nilai tempat ...",a:["Ribuan","Ratusan","Puluh ribuan","Puluhan"],correct:0,explain:"Angka 7 berada di posisi ribuan, jadi nilainya 7.000."},
+  {type:"MOTS",q:"Urutkan dari yang terkecil: 12.450, 12.405, 12.540. Bilangan yang berada di tengah adalah ...",a:["12.450","12.405","12.540","12.504"],correct:0,explain:"Urutannya 12.405, 12.450, 12.540."},
+  {type:"HOTS",q:"Dina memiliki kartu angka 2, 4, 5, dan 8. Ia menyusun bilangan 4 angka terbesar tanpa pengulangan. Bilangannya adalah ...",a:["8.542","8.524","8.452","8.245"],correct:0,explain:"Susun angka dari terbesar ke terkecil: 8, 5, 4, 2."}
+ ]},
+ {level:2,items:[
+  {type:"LOTS",q:"Bentuk panjang dari 36.208 adalah ...",a:["30.000 + 6.000 + 200 + 8","3.000 + 600 + 20 + 8","30.000 + 600 + 20 + 8","36.000 + 28"],correct:0,explain:"36.208 = 30.000 + 6.000 + 200 + 8."},
+  {type:"MOTS",q:"Manakah tanda perbandingan yang tepat untuk 56.709 ... 56.790?",a:["<",">","=","+"],correct:0,explain:"Puluhannya sama-sama 0, tetapi angka satuannya? Bandingkan puluhan: 0 pada 709 dan 9 pada 790, jadi 56.709 lebih kecil."},
+  {type:"HOTS",q:"Perpustakaan memiliki 2.485 buku. Sekolah mendapat sumbangan 1.275 buku, lalu 368 buku dipinjam. Berapa buku yang masih ada?",a:["3.392","3.760","3.492","3.858"],correct:0,explain:"2.485 + 1.275 = 3.760. Lalu 3.760 − 368 = 3.392."}
+ ]},
+ {level:3,items:[
+  {type:"LOTS",q:"Hasil dari 3.456 + 2.321 adalah ...",a:["5.777","5.767","5.877","5.677"],correct:0,explain:"3.456 + 2.321 = 5.777."},
+  {type:"MOTS",q:"Hasil dari 8.000 − 2.675 adalah ...",a:["5.325","5.425","5.235","6.325"],correct:0,explain:"8.000 − 2.675 = 5.325."},
+  {type:"HOTS",q:"Pak Tani memanen 125 keranjang mangga. Setiap keranjang berisi 24 mangga. Sebanyak 375 mangga dijual. Berapa mangga yang tersisa?",a:["2.625","2.500","2.875","3.000"],correct:0,explain:"125 × 24 = 3.000. Setelah dijual 375, tersisa 2.625."}
+ ]},
+ {level:4,items:[
+  {type:"LOTS",q:"Pembulatan 7.648 ke ratusan terdekat adalah ...",a:["7.600","7.700","7.650","8.000"],correct:0,explain:"Puluhan pada 7.648 adalah 4, jadi dibulatkan turun menjadi 7.600."},
+  {type:"MOTS",q:"Bilangan 48.726 jika dibulatkan ke ribuan terdekat menjadi ...",a:["49.000","48.000","48.700","50.000"],correct:0,explain:"Angka ratusannya 7, sehingga 48.726 dibulatkan naik menjadi 49.000."},
+  {type:"HOTS",q:"Sebuah stadion menampung 19.650 penonton. Jumlah penonton diperkirakan ke ribuan terdekat. Hasil perkiraannya adalah ...",a:["20.000","19.000","19.500","21.000"],correct:0,explain:"650 lebih dari 500, sehingga 19.650 dibulatkan menjadi 20.000."}
+ ]},
+ {level:5,items:[
+  {type:"LOTS",q:"Manakah yang merupakan kelipatan 6?",a:["24","25","27","29"],correct:0,explain:"Kelipatan 6 antara lain 6, 12, 18, 24, 30."},
+  {type:"MOTS",q:"Faktor dari 18 adalah ...",a:["1, 2, 3, 6, 9, 18","1, 2, 4, 6, 18","2, 3, 5, 9","1, 3, 6, 12, 18"],correct:0,explain:"Faktor adalah bilangan yang membagi 18 tanpa sisa: 1, 2, 3, 6, 9, 18."},
+  {type:"HOTS",q:"Lampu A berkedip setiap 4 detik dan lampu B setiap 6 detik. Jika keduanya berkedip bersama sekarang, berapa detik lagi keduanya berkedip bersama?",a:["12 detik","10 detik","18 detik","24 detik"],correct:0,explain:"KPK dari 4 dan 6 adalah 12. Jadi keduanya berkedip bersama lagi setelah 12 detik."}
+ ]}
+];
+const colors=["#ff6ca8","#48bff3","#9a83ff","#ffb84d","#39cfa0","#f07862"];
+let student="Pemain",score=0,correctCount=0,index=0,timeLeft=45,timer=null,soundOn=true,audioCtx=null;
+let cameraOn=false,hands=null,cameraStream=null,lastPinch=false,pointerMode="mouse",toastTimer=null,locked=false;
+const total=15;
+function showToast(msg){$("toast").textContent=msg;$("toast").classList.remove("hidden");clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("toast").classList.add("hidden"),2600)}
+function sound(freq=600,duration=.12,type="sine"){if(!soundOn)return;try{audioCtx ||= new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(.12,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration)}catch(e){}}
+$("soundBtn").onclick=()=>{soundOn=!soundOn;$("soundBtn").textContent=soundOn?"🔊 Suara":"🔇 Suara Mati";if(soundOn)sound(700)};
+function updateStats(){$("navName").textContent=student;$("navScore").textContent=score;$("navTimer").textContent=timeLeft}
+function startGame(){student=$("studentName").value.trim()||"Pemain";score=0;correctCount=0;index=0;$("welcome").classList.add("hidden");$("game").classList.remove("hidden");$("resultOverlay").classList.add("hidden");updateStats();renderQuestion()}
+$("startBtn").onclick=startGame;
+$("studentName").addEventListener("keydown",e=>{if(e.key==="Enter")startGame()});
+function currentQuestion(){return questions[Math.floor(index/3)].items[index%3]}
+function renderQuestion(){
+ if(index>=total){finishGame();return}
+ locked=false;const q=currentQuestion(),level=Math.floor(index/3)+1;
+ $("levelLabel").textContent=`🎯 Level ${level} dari 5`;
+ $("questionNo").textContent=`${index+1}/${total}`;
+ $("progress").style.width=`${index/total*100}%`;
+ $("difficulty").textContent=`${q.type} • ${q.type==="LOTS"?"MUDAH":q.type==="MOTS"?"MENENGAH":"TANTANGAN"}`;
+ $("questionText").textContent=q.q;$("questionHint").textContent="Pilih satu balon jawaban yang benar.";
+ $("feedback").textContent="";
+ const field=$("playfield");field.querySelectorAll(".balloon").forEach(x=>x.remove());
+ // Pilihan jawaban disusun acak, tetapi indeks jawaban benar tetap terlacak.
+ const opts=q.a.map((v,i)=>({v,correct:i===q.correct})).sort(()=>Math.random()-.5);
+ const positions=opts.length===4?[[12,12],[62,12],[12,56],[62,56]]:[[8,27],[38,8],[68,27]];
+ opts.forEach((o,i)=>{
+  const b=document.createElement("button");b.className="balloon";b.type="button";b.textContent=o.v;b.dataset.correct=o.correct?"1":"0";
+  b.style.setProperty("--balloon",colors[(index+i)%colors.length]);
+  b.style.left=positions[i][0]+"%";b.style.top=positions[i][1]+"%";b.style.animationDelay=(i*.23)+"s";
+  b.setAttribute("aria-label","Jawaban "+o.v);b.addEventListener("click",()=>choose(b));field.appendChild(b);
+ });
+ timeLeft=45;updateStats();clearInterval(timer);timer=setInterval(()=>{timeLeft--;updateStats();if(timeLeft<=0){clearInterval(timer);timeOut()}},1000);
+}
+function choose(balloon){
+ if(locked||!balloon||!balloon.isConnected)return;locked=true;clearInterval(timer);
+ const q=currentQuestion(),right=balloon.dataset.correct==="1";
+ if(right){
+  score+=10;correctCount++;updateStats();balloon.classList.add("popped");$("feedback").textContent="🎉 BENAR! +10";sound(880,.18);confettiAt(balloon);
+  $("questionHint").textContent=q.explain;
+ }else{
+  score=Math.max(0,score-2);updateStats();balloon.classList.add("wrong");$("feedback").textContent="💡 BELUM TEPAT";sound(180,.22,"triangle");
+  const rightBalloon=[...$("playfield").querySelectorAll(".balloon")].find(b=>b.dataset.correct==="1");
+  if(rightBalloon)rightBalloon.style.outline="4px solid #48d69d";
+  $("questionHint").textContent="Jawaban yang benar: "+q.a[q.correct]+". "+q.explain;
+ }
+ [...$("playfield").querySelectorAll(".balloon")].forEach(b=>{if(b!==balloon)b.style.opacity=".38";b.disabled=true});
+ setTimeout(()=>{index++;renderQuestion()},right?1450:2200);
+}
+function timeOut(){if(locked)return;locked=true;const q=currentQuestion();$("feedback").textContent="⏰ WAKTU HABIS!";$("questionHint").textContent="Jawaban benar: "+q.a[q.correct]+". "+q.explain;sound(160,.3,"triangle");setTimeout(()=>{index++;renderQuestion()},2100)}
+function confettiAt(el){const r=el.getBoundingClientRect(),field=$("playfield").getBoundingClientRect();for(let i=0;i<22;i++){const p=document.createElement("i");p.className="confetti";p.style.left=(r.left-field.left+r.width/2)+"px";p.style.top=(r.top-field.top+r.height/2)+"px";p.style.background=colors[i%colors.length];p.style.setProperty("--dx",(Math.random()*180-90)+"px");p.style.setProperty("--dy",(Math.random()*-170-20)+"px");$("playfield").appendChild(p);setTimeout(()=>p.remove(),900)}}
+function finishGame(){clearInterval(timer);$("progress").style.width="100%";$("resultOverlay").classList.remove("hidden");$("finalScore").textContent=score;$("finalDetail").textContent=`${student}, kamu menjawab benar ${correctCount} dari 15 soal.`;let title,emoji,msg;if(correctCount>=13){title="Luar Biasa!";emoji="🏆";msg="Kamu jago matematika! Terus pertahankan semangat belajarmu."}else if(correctCount>=9){title="Hebat Sekali!";emoji="🌟";msg="Usahamu keren! Terus berlatih agar makin mahir."}else{title="Tetap Semangat!";emoji="💪";msg="Setiap latihan membuatmu semakin pintar. Coba lagi, ya!"}$("resultTitle").textContent=title;$("resultEmoji").textContent=emoji;$("resultMessage").textContent=msg;$("levelDots").innerHTML=Array.from({length:5},(_,i)=>`<span class="dot ${correctCount>=(i+1)*3?"done":""}"></span>`).join("");sound(700,.2);setTimeout(()=>sound(900,.3),180)}
+$("againBtn").onclick=()=>{stopCamera();$("resultOverlay").classList.add("hidden");$("game").classList.add("hidden");$("welcome").classList.remove("hidden");$("studentName").value=student;};
+function setPointer(x,y,pinch){const field=$("playfield"),r=field.getBoundingClientRect(),p=$("pointer");p.style.display="block";p.style.left=(x*r.width)+"px";p.style.top=(y*r.height)+"px";p.classList.toggle("pinching",pinch)}
+// Mouse and touchscreen are always available as alternatives.
+$("playfield").addEventListener("pointermove",e=>{if(pointerMode==="hand")return;const r=$("playfield").getBoundingClientRect();setPointer((e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height,false)});
+$("playfield").addEventListener("pointerdown",e=>{if(pointerMode==="hand")return;const b=e.target.closest(".balloon");if(b)choose(b)});
+$("cameraBtn").onclick=enableCamera;$("stopCameraBtn").onclick=stopCamera;
+async function enableCamera(){
+ if(!navigator.mediaDevices?.getUserMedia){showToast("Browser ini tidak mendukung akses kamera.");return}
+ $("cameraBtn").disabled=true;$("controlStatus").textContent="Meminta izin kamera...";
+ try{
+  // Pustaka MediaPipe Hands dimuat hanya setelah pengguna menekan tombol kamera.
+  await loadMediaPipe();
+  cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user",width:640,height:480},audio:false});
+  const video=$("video");video.srcObject=cameraStream;await video.play();video.classList.remove("hidden");
+  hands=new window.Hands({locateFile:file=>`https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
+  hands.setOptions({maxNumHands:1,modelComplexity:1,minDetectionConfidence:.65,minTrackingConfidence:.6});
+  hands.onResults(onHandResults);
+  cameraOn=true;pointerMode="hand";$("cameraBtn").classList.add("hidden");$("stopCameraBtn").classList.remove("hidden");
+  $("controlStatus").textContent="🤏 Tunjukkan tangan. Arahkan telunjuk, lalu pinch ibu jari dan telunjuk!";
+  processVideo();showToast("Kamera aktif. Berikan gesture pinch untuk memilih balon.");
+ }catch(err){console.error(err);showToast(err.name==="NotAllowedError"?"Izin kamera ditolak. Kamu tetap bisa bermain dengan klik/sentuh.":"Kamera tidak dapat diaktifkan. Coba klik/sentuh balon.");stopCamera();$("cameraBtn").disabled=false}
+}
+function loadMediaPipe(){return new Promise((resolve,reject)=>{if(window.Hands){resolve();return}const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js";s.onload=resolve;s.onerror=()=>reject(new Error("Gagal memuat MediaPipe"));document.head.appendChild(s)})}
+let processing=false;
+async function processVideo(){if(!cameraOn)return;if(!processing&&hands&&$("video").readyState>=2){processing=true;try{await hands.send({image:$("video")})}catch(e){}processing=false}requestAnimationFrame(processVideo)}
+function onHandResults(results){
+ const lm=results.multiHandLandmarks?.[0];if(!lm){$("pointer").style.display="none";lastPinch=false;return}
+ // Kamera mirror: koordinat X dibalik agar gerakan terasa alami.
+ const tip=lm[8],thumb=lm[4],dist=Math.hypot(tip.x-thumb.x,tip.y-thumb.y),pinch=dist<.055;
+ const x=1-tip.x,y=tip.y;setPointer(x,y,pinch);
+ if(pinch&&!lastPinch&&!locked){
+  const field=$("playfield").getBoundingClientRect(),px=x*field.width,py=y*field.height;
+  const el=document.elementFromPoint(field.left+px,field.top+py),balloon=el?.closest?.(".balloon");if(balloon)choose(balloon);
+ }
+ lastPinch=pinch;
+}
+function stopCamera(){
+ cameraOn=false;processing=false;lastPinch=false;
+ if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null}
+ if(hands){try{hands.close()}catch(e){}hands=null}
+ $("video").srcObject=null;$("video").classList.add("hidden");$("pointer").style.display="none";
+ $("stopCameraBtn").classList.add("hidden");$("cameraBtn").classList.remove("hidden");$("cameraBtn").disabled=false;
+ pointerMode="mouse";$("controlStatus").textContent="🖱️ Klik/sentuh balon atau aktifkan kamera untuk gesture pinch.";
+}
+window.addEventListener("beforeunload",stopCamera);
+})();
+</script>
+</body>
+</html>
